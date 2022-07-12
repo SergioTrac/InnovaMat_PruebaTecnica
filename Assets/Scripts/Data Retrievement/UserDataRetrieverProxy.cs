@@ -5,18 +5,25 @@ using UnityEngine;
 public class UserDataRetrieverProxy : IUserDataRetriever
 {
     IUserDataRetriever localRetriever;
+    IUserDataRetriever remoteRetriever;
 
-    public UserDataRetrieverProxy(IUserDataRetriever _localRetriever)
+    public UserDataRetrieverProxy(IUserDataRetriever _localRetriever, IUserDataRetriever _remoteRetriever)
     {
         localRetriever = _localRetriever;
+        remoteRetriever = _remoteRetriever;
     }
 
     public UserData retrieveData()
     {
-        // SI ESTAMOS EN ANDROID
-        return localRetriever.retrieveData();
+        
+        if(Application.platform == RuntimePlatform.WindowsEditor)
+        {
+            return remoteRetriever.retrieveData();
+        }else if(Application.platform == RuntimePlatform.WebGLPlayer)
+            return localRetriever.retrieveData();
 
-        // SI ESTAMOS EN WEBGL
+        Debug.LogWarning("UserDataRetriever: Undefined behaviour for the current platform");
 
+        return null;
     }
 }
