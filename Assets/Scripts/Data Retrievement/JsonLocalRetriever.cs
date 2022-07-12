@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class JsonLocalRetriever : IUserDataRetriever
 {
@@ -12,8 +13,11 @@ public class JsonLocalRetriever : IUserDataRetriever
     }
 
 
-    public UserData retrieveData()
+    public void retrieveData(UnityEvent<UserData> _OnDataLoaded)
     {
-        return JsonUtility.FromJson<UserData>(jsonFile.text);
+        UserData userData = JsonUtility.FromJson<UserData>(jsonFile.text);
+
+        if (userData != null)
+            _OnDataLoaded?.Invoke(userData);
     }
 }

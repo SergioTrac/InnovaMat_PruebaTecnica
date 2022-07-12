@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class UserDataRetrieverProxy : IUserDataRetriever
 {
@@ -13,17 +14,17 @@ public class UserDataRetrieverProxy : IUserDataRetriever
         remoteRetriever = _remoteRetriever;
     }
 
-    public UserData retrieveData()
+    public void retrieveData(UnityEvent<UserData> _OnDataLoaded)
     {
         
         if(Application.platform == RuntimePlatform.WindowsEditor)
         {
-            return remoteRetriever.retrieveData();
+            remoteRetriever.retrieveData(_OnDataLoaded);
         }else if(Application.platform == RuntimePlatform.WebGLPlayer)
-            return localRetriever.retrieveData();
-
-        Debug.LogWarning("UserDataRetriever: Undefined behaviour for the current platform");
-
-        return null;
+        {
+            localRetriever.retrieveData(_OnDataLoaded);
+        }
+        else
+            Debug.LogWarning("UserDataRetriever: Undefined behaviour for the current platform");
     }
 }

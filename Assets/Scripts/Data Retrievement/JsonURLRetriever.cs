@@ -10,34 +10,18 @@ public class JsonURLRetriever : IUserDataRetriever
 {
     private string URLPathToFile;
 
-    private bool dataLoaded = false;
-    private bool loadingData = false;
-    private string jsonFile;
-
     public JsonURLRetriever(string _url)
     {
         URLPathToFile = _url;
-        getRemoteData();
     }
 
-    public UserData retrieveData()
+    public void retrieveData(UnityEvent<UserData> _OnDataLoaded)
     {
-        if (dataLoaded)
-        {
-            return JsonConvert.DeserializeObject<UserData>(jsonFile);
-        }
-        else if (!loadingData)
-        {
-            getRemoteData();
-        }
-
-        return null;
+        getRemoteData(_OnDataLoaded);
     }
 
-    public async void getRemoteData()
+    private async void getRemoteData(UnityEvent<UserData> _OnDataLoaded)
     {
-        loadingData = true;
-
         var webRequest = UnityWebRequest.Get(URLPathToFile);
         webRequest.SetRequestHeader("Content-Type", "application/json");
 
@@ -49,11 +33,9 @@ public class JsonURLRetriever : IUserDataRetriever
 
         if(webRequest.result == UnityWebRequest.Result.Success)
         {
-            jsonFile = jsonResponse;
-            dataLoaded = true;
+            UserData userData = JsonConvert.DeserializeObject<UserData>(jsonResponse);
+            _OnDataLoaded?.Invoke(userData);
         }
-
-        loadingData = false;
     }
 
 }

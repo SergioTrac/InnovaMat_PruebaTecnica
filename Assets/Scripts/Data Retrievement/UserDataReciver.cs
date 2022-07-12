@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class UserDataReciver : MonoBehaviour
 {
@@ -12,7 +13,9 @@ public class UserDataReciver : MonoBehaviour
     private readonly string GOOGLE_DRIVE_DOWNLOAD_PREFIX = "https://drive.google.com/uc?export=download&id=";
     private string URLPathToFile;
 
-    IUserDataRetriever userDataRetriever;
+    UnityEvent<UserData> OnDataLoaded;
+
+    UserDataRetrieverProxy userDataRetriever;
 
     private void Awake()
     {
@@ -23,26 +26,35 @@ public class UserDataReciver : MonoBehaviour
                                     new JsonURLRetriever(URLPathToFile)
                                     );
 
+        if (OnDataLoaded == null)
+            OnDataLoaded = new UnityEvent<UserData>();
+    }
+
+    private void OnEnable()
+    {
+        OnDataLoaded.AddListener(SetSessionData);
+    }
+
+    private void OnDisable()
+    {
+        OnDataLoaded.RemoveListener(SetSessionData);
     }
 
     private void Start()
     {
-        Getdata();
+        userDataRetriever.retrieveData(OnDataLoaded);
     }
 
-    public void Getdata()
+    private void SetSessionData(UserData _userData)
     {
-        UserData _user = userDataRetriever.retrieveData();
-        sessionInfo.UserData = _user;
-
-        Debug.Log(sessionInfo.UserData.first_name);
+        sessionInfo.SetUserData(_userData);
     }
 
     private void OnGUI()
     {
         if (GUILayout.Button("Generate Nodes"))
         {
-            Getdata();
+            Debug.Log(sessionInfo.GetUserData().first_name);
         }
     }
 }
