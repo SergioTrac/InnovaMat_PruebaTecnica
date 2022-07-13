@@ -1,12 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
 
+/// <summary>
+/// It collects different functions for the automatic execution of builds.
+/// </summary>
 public class AutomateBuildProcess
 {
-    private static string buildFolderPath = "C:/Users/sev_9/Desktop/Builds/";
+    // It could be any specific location needed.
+    private static string buildFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/Builds/";
+
     private static string date = System.DateTime.Now.ToString("dd-MM-yyyy_HH-mm-ss");
     private static string prefix = "Innovamat_";
 

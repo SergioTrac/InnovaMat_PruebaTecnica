@@ -3,10 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+
+/// <summary>
+/// Store the information of the current session.
+/// </summary>
 [CreateAssetMenu(fileName = "SessionInfo", menuName = "Data/SessionInfo", order = 1)]
 public class SessionInfo : ScriptableObject
 {
+    [Header("Data")]
     private UserData userData;
+
+
+    public UnityEvent OnInfoChanged;
+
+    #region Getters and Setters
 
     public UserData GetUserData()
     {
@@ -19,5 +29,6 @@ public class SessionInfo : ScriptableObject
         OnInfoChanged?.Invoke();
     }
 
-    public UnityEvent OnInfoChanged;
+    #endregion
+
 }

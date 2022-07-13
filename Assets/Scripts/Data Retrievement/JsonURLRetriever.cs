@@ -6,6 +6,9 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Networking;
 
+/// <summary>
+/// A class to retrieve Json data from a remote Json file.
+/// </summary>
 public class JsonURLRetriever : IUserDataRetriever
 {
     private string URLPathToFile;
@@ -17,10 +20,14 @@ public class JsonURLRetriever : IUserDataRetriever
 
     public void retrieveData(UnityEvent<UserData> _OnDataLoaded)
     {
-        getRemoteData(_OnDataLoaded);
+        getRemoteUserData(_OnDataLoaded);
     }
 
-    private async void getRemoteData(UnityEvent<UserData> _OnDataLoaded)
+    /// <summary>
+    /// Asincronous method to get a remote Json User Data file.
+    /// </summary>
+    /// <param name="_OnDataLoaded">CallBack event</param>
+    private async void getRemoteUserData(UnityEvent<UserData> _OnDataLoaded)
     {
         var webRequest = UnityWebRequest.Get(URLPathToFile);
         webRequest.SetRequestHeader("Content-Type", "application/json");
@@ -29,10 +36,12 @@ public class JsonURLRetriever : IUserDataRetriever
         while (!operation.isDone)
             await Task.Yield();
 
+        // Taking the final Json.
         string jsonResponse = webRequest.downloadHandler.text;
 
         if(webRequest.result == UnityWebRequest.Result.Success)
         {
+            // Converting Json in User Data.
             UserData userData = JsonConvert.DeserializeObject<UserData>(jsonResponse);
             _OnDataLoaded?.Invoke(userData);
         }
